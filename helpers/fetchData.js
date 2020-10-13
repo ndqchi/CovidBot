@@ -10,8 +10,8 @@ const fetchData = (info) => {
             .get(url)
             .then((res) => {
                 let data = res.data;
-                if (data.message && data.message === 'Not found') {
-                    info.response = "Oh no! Data not found!"
+                if (data.length === 0) {
+                    info.response = "Oh no! Data not found! Please try again with another country!";
                 }
                 else {
                     info.response = `Global status, Total Confirmed: ${data['TotalConfirmed']}, ` +
@@ -28,8 +28,8 @@ const fetchData = (info) => {
             .get(url)
             .then((res) => {
                 let raw = res.data;
-                if (raw.message && raw.message === 'Not Found') {
-                    info.response = "Data not found";
+                if (data.length === 0) {
+                    info.response = "Oh no! Data not found! Please try again with another country!";
                 }
                 else {
                     data = raw[raw.length - 1];
