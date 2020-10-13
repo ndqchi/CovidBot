@@ -1,6 +1,7 @@
 const { FACEBOOK_ACCESS_TOKEN, DIALOGFLOW_TOKEN } = require('../config');
 const dialogflow = require('@google-cloud/dialogflow');
 const axios = require('axios');
+const fetchData = require('./fetchData');
 
 const sendTextMessage = (senderId, text) => {
     axios({
@@ -17,7 +18,7 @@ const sendTextMessage = (senderId, text) => {
 module.exports = (event) => {
     const senderId = event.sender.id;
     var message = event.message.text;
-    const welcomeMessage = "Hi there! I am a chatbot that provides latest Covid19 status. "
+    const welcomeMessage = "Hi there! I am a chatbot that provides latest Covid19 status. " +
     "You can enter 'Global status' or '<country> status' to get the information you need!";
     const fallbackMessage = "Sorry! What was that? Can you try again with 'Global status' or '<country> status'?";
 
