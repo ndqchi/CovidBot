@@ -20,7 +20,10 @@ const fetchData = (info) => {
                 }
                 resolve();
             })
-            .catch(e => reject(e));
+            .catch(e => {
+                info.response = "Oh no! Data not found! Please try again with another country!";
+                reject(e);
+            });
         }
         else {
             url = "https://api.covid19api.com/total/country/" + location;
@@ -42,7 +45,10 @@ const fetchData = (info) => {
                 }
                 resolve();
             })
-            .catch(e => reject(e));
+            .catch(e => {
+                info.response = "Oh no! Data not found! Please try again with another country!";
+                reject(e);
+            });
         }
     });
 };
