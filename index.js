@@ -22,4 +22,4 @@ const webhookController = require('./controllers/messageWebhook');
 app.get('/', verifyController);
 
 //webhook
-app.post('/webhook', webhookController);
+app.post('/', webhookController);
