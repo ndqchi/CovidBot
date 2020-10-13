@@ -39,9 +39,10 @@ module.exports = (event) => {
     if (message.toLowerCase().includes("hi") || message.toLowerCase().includes("hello"))
         sendTextMessage(senderId, welcomeMessage);
     else if (message.toLowerCase().includes("status")){
-        fetchData(message)
+        var info = {"message": message};
+        fetchData(info)
         .then(() => {
-            const response = message
+            const response = info.response;
             sendTextMessage(senderId, response);
         })
         .catch(e => {

@@ -1,8 +1,8 @@
 const axios = require('axios');
 
-const fetchData = (message) => {
+const fetchData = (info) => {
     return new Promise((resolve, reject) => {
-        let location = message.split(" ")[0];
+        let location = info.message.split(" ")[0];
         let url;
         if (location === 'Global') {
             url = "https://api.covid19api.com/world/total";
@@ -11,10 +11,10 @@ const fetchData = (message) => {
             .then((res) => {
                 let data = res.data;
                 if (data.message && data.message === 'Not found') {
-                    message = "Oh no! Data not found!"
+                    info.response = "Oh no! Data not found!"
                 }
                 else {
-                    message = `Total Confirmed: ${data['TotalConfirmed']}, ` +
+                    info.response = `Total Confirmed: ${data['TotalConfirmed']}, ` +
                             `Total Deaths: ${data['TotalDeaths']}, ` +
                             `Total Recovered: ${data['TotalRecovered']}, ` +
                             `Updated Time: ${new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'long', day: 'numeric'})
@@ -31,11 +31,11 @@ const fetchData = (message) => {
             .then((res) => {
                 let raw = res.data;
                 if (raw.message && raw.message === 'Not Found') {
-                    message = "Data not found";
+                    info.response = "Data not found";
                 }
                 else {
                     data = raw[raw.length - 1];
-                    message = `Country: ${data['Country']}, ` + 
+                    info.response = `Country: ${data['Country']}, ` + 
                             `Confirmed: ${data['Confirmed']}, ` +
                             `Deaths: ${data['Deaths']}, ` +
                             `Recovered: ${data['Recovered']}, ` +
