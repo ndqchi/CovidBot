@@ -14,11 +14,9 @@ const fetchData = (info) => {
                     info.response = "Oh no! Data not found!"
                 }
                 else {
-                    info.response = `Total Confirmed: ${data['TotalConfirmed']}, ` +
+                    info.response = `Global status, Total Confirmed: ${data['TotalConfirmed']}, ` +
                             `Total Deaths: ${data['TotalDeaths']}, ` +
-                            `Total Recovered: ${data['TotalRecovered']}, ` +
-                            `Updated Time: ${new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'long', day: 'numeric'})
-                                .format(new Date())}`;
+                            `Total Recovered: ${data['TotalRecovered']}`;
                 }
                 resolve();
             })
