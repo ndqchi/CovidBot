@@ -28,7 +28,7 @@ const fetchData = (info) => {
             .get(url)
             .then((res) => {
                 let raw = res.data;
-                if (data.length === 0) {
+                if (raw.length === 0) {
                     info.response = "Oh no! Data not found! Please try again with another country!";
                 }
                 else {
