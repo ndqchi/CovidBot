@@ -1,34 +1,24 @@
 const axios = require('axios');
 
-const handler = (interaction) => {
+const fetchData = (message) => {
     return new Promise((resolve, reject) => {
-        let location = interaction.parameters['location'];
+        let location = message.split(" ")[0];
         let url;
-        if (location === 'global') {
+        if (location === 'Global') {
             url = "https://api.covid19api.com/world/total";
             axios
             .get(url)
             .then((res) => {
                 let data = res.data;
                 if (data.message && data.message === 'Not found') {
-                    interaction.response.followupEvent = {
-                        name: 'data-not-found',
-                        data: {}
-                    }
+                    message = "Oh no! Data not found!"
                 }
                 else {
-                    interaction.response.followupEvent = {
-                        name: 'status-data-found',
-                        data: {
-                            TotalConfirmed: data.TotalConfirmed,
-                            TotalDeaths: data.TotalDeaths,
-                            TotalRecovered: data.TotalRecovered,
-                            UpdatedTime: new Intl.DateTimeFormat(
-                                'en-US', 
-                                {year: 'numeric', month: 'long', day: 'numeric'}
-                                ).format(new Date())
-                        }
-                    }
+                    message = `Total Confirmed: ${data['TotalConfirmed']}, ` +
+                            `Total Deaths: ${data['TotalDeaths']}, ` +
+                            `Total Recovered: ${data['TotalRecovered']}, ` +
+                            `Updated Time: ${new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'long', day: 'numeric'})
+                                .format(new Date())}`;
                 }
                 resolve();
             })
@@ -41,25 +31,16 @@ const handler = (interaction) => {
             .then((res) => {
                 let raw = res.data;
                 if (raw.message && raw.message === 'Not Found') {
-                    interaction.response.followupEvent = {
-                        name: 'data-not-found',
-                        data: {}
-                    }
+                    message = "Data not found";
                 }
                 else {
                     data = raw[raw.length - 1];
-                    interaction.response.followupEvent = {
-                        name: 'global-status-data-found',
-                        data: {
-                            TotalConfirmed: data.TotalConfirmed,
-                            TotalDeaths: data.TotalDeaths,
-                            TotalRecovered: data.TotalRecovered,
-                            UpdatedTime: new Intl.DateTimeFormat(
-                                'en-US', 
-                                {year: 'numeric', month: 'long', day: 'numeric'}
-                                ).format(new Date(data.Date))
-                        }
-                    }
+                    message = `Country: ${data['Country']}, ` + 
+                            `Confirmed: ${data['Confirmed']}, ` +
+                            `Deaths: ${data['Deaths']}, ` +
+                            `Recovered: ${data['Recovered']}, ` +
+                            `Updated Time: ${new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'long', day: 'numeric'})
+                                .format(new Date(data['Date']))}`;
                 }
                 resolve();
             })
@@ -68,9 +49,4 @@ const handler = (interaction) => {
     });
 };
 
-module.exports = handler;
-
-// let categorizedModules = system.loadModulesFromFolder(path.join(__dirname, 'handlers'))
-//   Object.keys(categorizedModules).forEach(moduleName => {
-//     handlers[`${folderName}/${moduleName}`] = categorizedModules[moduleName]
-// })
+module.exports = fetchData;
