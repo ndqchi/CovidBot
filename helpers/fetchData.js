@@ -14,10 +14,10 @@ const fetchData = (info) => {
                     info.response = "Oh no! Data not found! Please try again with another country!";
                 }
                 else {
-                    data = data.Global;
                     info.response = `Global status, Total Confirmed: ${data['TotalConfirmed']} (+${data['NewConfirmed']}), ` +
                             `Total Deaths: ${data['TotalDeaths']} (+${data['NewDeaths']}), ` +
                             `Total Recovered: ${data['TotalRecovered']} (+${data['NewRecovered']})`;
+                    console.log("axios "+info.response);
                 }
                 resolve();
             })
@@ -45,6 +45,7 @@ const fetchData = (info) => {
                             `Active: ${data['Active']} (+${data['Active'] - data_prev['Active']}), ` +
                             `Updated Time: ${new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'long', day: 'numeric'})
                                 .format(new Date(data['Date']))} (UTC+0.00)`;
+                    console.log("axios " + info.response);
                 }
                 resolve();
             })
