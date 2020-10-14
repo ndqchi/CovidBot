@@ -18,7 +18,6 @@ const sendTextMessage = (senderId, text) => {
 module.exports = (event) => {
     const senderId = event.sender.id;
     const message = event.message.text;
-    console.log(message);
     const client = new Wit({ accessToken: WITAI_TOKEN });
     client
     .message(message)
@@ -36,10 +35,12 @@ module.exports = (event) => {
         else if (res.intents[0].name == 'getCovidStatus' && res.entities['wit$location:location']) {
             let location = res.entities['wit$location:location'][0].resolved.values[0].external.wikipedia;
             if (location) {
+                console.log("location: "+ location);
                 let info = {location: location.toLowerCase().replace(" ","-")};
                 fetchData(info)
                 .then(() => {
-                    const response = info.response ? info.response : fallbackMessage[Math.floor((Math.random() * 3))];
+                    console.log("response: " + info.response);
+                    const response = info.response.length > 0 ? info.response : fallbackMessage[Math.floor((Math.random() * 3))];
                     sendTextMessage(senderId, response);
                 })
                 .catch((e) => {
@@ -51,18 +52,21 @@ module.exports = (event) => {
         }
         else if (res.intents[0].name == 'getCovidStatus'&& res.entities['global:global']) {
             let info = {location: "global"};
+            console.log("location: "+ global);
             fetchData(info)
             .then(() => {
+                console.log("response: " + info.response);
                 const response = info.response;
                 sendTextMessage(senderId, response);
             })
             .catch((e) => {
-                console.log(e)
+                console.log(e);
                 sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
             });
         }
-        else 
-            sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
+        else{
+            console.log("fallback");
+            sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);}
     })
     .catch((e) => {
         console.log(e);
