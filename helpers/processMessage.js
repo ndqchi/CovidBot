@@ -27,7 +27,7 @@ module.exports = (event) => {
         else if (res.traits.wit$greetings)
             sendTextMessage(senderId, welcomeMessage[Math.floor((Math.random() * 2))]);
         else if (res.traits.wit$sentiment && res.traits.wit$sentiment[0].value == 'negative') {
-            if (res.traits.wit$sentiment.confidence > CONFIDENCE_THRESHOLD)
+            if (res.traits.wit$sentiment[0].confidence > CONFIDENCE_THRESHOLD)
                 sendTextMessage(senderId, encouragingMessage[Math.floor((Math.random() * 3))])
             else
                 sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);

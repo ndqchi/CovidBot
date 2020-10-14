@@ -1,4 +1,4 @@
-const CONFIDENCE_THRESHOLD = 0.6;
+const CONFIDENCE_THRESHOLD = 0.5;
 const encouragingMessage = [
     "Hey! Don't feel so down! We are all in this together. I'm sure we can overcome it soon!",
     "Don't worry my friend! Everything will turn out well! Let's believe in human capabilities!",
