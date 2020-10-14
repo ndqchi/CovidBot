@@ -14,6 +14,7 @@ const fetchData = (info) => {
                     info.response = "Oh no! Data not found! Please try again with another country!";
                 }
                 else {
+                    data = data.Global;
                     info.response = `Global status, Total Confirmed: ${data['TotalConfirmed']} (+${data['NewConfirmed']}), ` +
                             `Total Deaths: ${data['TotalDeaths']} (+${data['NewDeaths']}), ` +
                             `Total Recovered: ${data['TotalRecovered']} (+${data['NewRecovered']})`;
