@@ -7,7 +7,7 @@ const encouragingMessage = [
 const fallbackMessage = [
     "Sorry! What was that? Can you try again with something like 'Global covid status' or '<some country> status'?",
     "I don't really understand! :( Mind trying again?",
-    "I will always be here for you! Shall we try again?"
+    "Hmm... I don't get it... But I will always be here for you! Shall we try again with more common terms?"
 ];
 const byeMessage = [
     "Goodbye! Great talk with you! Please stay safe, especially during this Covid19.",

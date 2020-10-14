@@ -14,11 +14,11 @@ const sendTextMessage = (senderId, text) => {
         },
         headers: { "Authorization": "Bearer "+ FACEBOOK_ACCESS_TOKEN}
     });
-    console.log(text);
 };
 module.exports = (event) => {
     const senderId = event.sender.id;
     const message = event.message.text;
+    console.log(message);
     const client = new Wit({ accessToken: WITAI_TOKEN });
     client
     .message(message)
