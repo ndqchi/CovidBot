@@ -2,10 +2,10 @@ const axios = require('axios');
 
 const fetchData = (info) => {
     return new Promise((resolve, reject) => {
-        let location = info.message.split(" ")[0];
+        let location = info.location;
         let url;
-        if (location === 'Global') {
-            url = "https://api.covid19api.com/world/total";
+        if (location === 'global') {
+            url = "https://api.covid19api.com/summary";
             axios
             .get(url)
             .then((res) => {
@@ -14,9 +14,10 @@ const fetchData = (info) => {
                     info.response = "Oh no! Data not found! Please try again with another country!";
                 }
                 else {
-                    info.response = `Global status, Total Confirmed: ${data['TotalConfirmed']}, ` +
-                            `Total Deaths: ${data['TotalDeaths']}, ` +
-                            `Total Recovered: ${data['TotalRecovered']}`;
+                    data = data.Global;
+                    info.response = `Global status, Total Confirmed: ${data['TotalConfirmed']} (+${data['NewConfirmed']}), ` +
+                            `Total Deaths: ${data['TotalDeaths']} (+${data['NewDeaths']}), ` +
+                            `Total Recovered: ${data['TotalRecovered']} (+${data['NewRecovered']})`;
                 }
                 resolve();
             })
@@ -36,12 +37,14 @@ const fetchData = (info) => {
                 }
                 else {
                     data = raw[raw.length - 1];
-                    info.response = `Country: ${data['Country']}, ` + 
-                            `Confirmed: ${data['Confirmed']}, ` +
-                            `Deaths: ${data['Deaths']}, ` +
-                            `Recovered: ${data['Recovered']}, ` +
+                    data_prev = raw[raw.length - 2];
+                    info.response = `In ${data['Country']}, ` + 
+                            `Confirmed: ${data['Confirmed']} (+${data['Confirmed'] - data_prev['Confirmed']}), ` +
+                            `Deaths: ${data['Deaths']} (+${data['Deaths'] - data_prev['Deaths']}), ` +
+                            `Recovered: ${data['Recovered']} (+${data['Recovered'] - data_prev['Recovered']}), ` +
+                            `Active: ${data['Active']} (+${data['Active'] - data_prev['Active']}), ` +
                             `Updated Time: ${new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'long', day: 'numeric'})
-                                .format(new Date(data['Date']))}`;
+                                .format(new Date(data['Date']))} (UTC+0.00)`;
                 }
                 resolve();
             })

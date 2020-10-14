@@ -1,7 +1,8 @@
-const { FACEBOOK_ACCESS_TOKEN, DIALOGFLOW_TOKEN } = require('../config');
-const dialogflow = require('@google-cloud/dialogflow');
+const { FACEBOOK_ACCESS_TOKEN, WITAI_TOKEN } = require('../config');
+const { Wit } = require('node-wit');
 const axios = require('axios');
 const fetchData = require('./fetchData');
+const { welcomeMessage, byeMessage, encouragingMessage, fallbackMessage, CONFIDENCE_THRESHOLD} = require('./constants');
 
 const sendTextMessage = (senderId, text) => {
     axios({
@@ -17,38 +18,54 @@ const sendTextMessage = (senderId, text) => {
 };
 module.exports = (event) => {
     const senderId = event.sender.id;
-    var message = event.message.text;
-    const welcomeMessage = "Hi there! I am a chatbot that provides latest Covid19 status. " +
-    "You can enter 'Global status' or '<country> status' to get the information you need!";
-    const fallbackMessage = "Sorry! What was that? Can you try again with 'Global status' or '<country> status'?";
-
-    // const sessionClient = new dialogflow.SessionsClient();
-    // const sessionPath = sessionClient.projectAgentSessionPath(projectId, sessionId);
-    // const request = {
-    //     session: sessionPath,
-    //     queryInput: {
-    //         text: {
-    //             text: message,
-    //             languageCode: 'en-US',
-    //         },
-    //     },
-    // };
-    // const responses = await sessionClient.detectIntent(request);
-    // const result = responses[0].queryResult;
-    // sendTextMessage(senderId, result.queryText);
-    if (message.toLowerCase().includes("hi") || message.toLowerCase().includes("hello"))
-        sendTextMessage(senderId, welcomeMessage);
-    else if (message.toLowerCase().includes("status")){
-        var info = {"message": message};
-        fetchData(info)
-        .then(() => {
-            const response = info.response;
-            sendTextMessage(senderId, response);
-        })
-        .catch(e => {
-            console.log(e)
-        });
-    }
-    else
-        sendTextMessage(senderId, fallbackMessage);
+    const message = event.message.text;
+    const client = new Wit({ accessToken: WITAI_TOKEN });
+    client
+    .message(message)
+    .then((res) => {
+        if (res.traits.wit$bye)
+            sendTextMessage(senderId, byeMessage[Math.floor((Math.random() * 6))]);
+        else if (res.traits.wit$greetings)
+            sendTextMessage(senderId, welcomeMessage[Math.floor((Math.random() * 2))]);
+        else if (res.traits.wit$sentiment) {
+            if (res.traits.wit$sentiment[0].value == 'negative' && res.traits.wit$sentiment.confidence > CONFIDENCE_THRESHOLD)
+                sendTextMessage(senderId, encouragingMessage[Math.floor((Math.random() * 3))])
+            else
+                sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
+        }
+        else if (res.intents[0].name == 'getCovidStatus' && res.entities['wit$location:location']) {
+            let location = res.entities['wit$location:location'][0].resolved.values[0].external.wikipedia;
+            if (location) {
+                let info = {location: location.toLowerCase().replace(" ","-")};
+                fetchData(info)
+                .then(() => {
+                    const response = info.response ? info.response : fallbackMessage[Math.floor((Math.random() * 3))];
+                    sendTextMessage(senderId, response);
+                })
+                .catch((e) => {
+                    console.log(e)
+                    sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
+                });
+            } else
+                sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
+        }
+        else if (res.intents[0].name == 'getCovidStatus'&& res.entities['global:global']) {
+            let info = {location: "global"};
+            fetchData(info)
+            .then(() => {
+                const response = info.response;
+                sendTextMessage(senderId, response);
+            })
+            .catch((e) => {
+                console.log(e)
+                sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
+            });
+        }
+        else 
+            sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
+    })
+    .catch((e) => {
+        console.log(e);
+        sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
+    });
 }
