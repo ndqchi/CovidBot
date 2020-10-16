@@ -19,17 +19,21 @@ const byeMessage = [
 ];
 const welcomeMessage = [
     "Hi there! I am Covid19 chatbot. " +
-    "You can ask me about the latest Covid19 situation around the world. " +
+    "You can ask me about the latest Covid19 situation in any country around the world. " +
     "Some examples to give you a feel: 'Tell me about Covid19 status in <country>/globally', " +
     "or simply 'Worldwide/<country> status'",
-    "Hey! I am a chatbot that provides information about global and local Covid19 situation. "+
+    "Hey! I am a chatbot that provides information about global and country-specific Covid19 situation. "+
     "Here are some common questions I get asked: 'Singapore covid19 status', 'What is covid situation in Germany?' or " +
     "'How is covid19 globally?'"
 ];
+const countryPromptMessage = "The location you said does not seem to be a country."+
+" Would you like to try again with the country of that region?";
+
 module.exports = {
     CONFIDENCE_THRESHOLD: CONFIDENCE_THRESHOLD,
     welcomeMessage: welcomeMessage,
     byeMessage: byeMessage,
     encouragingMessage: encouragingMessage,
-    fallbackMessage: fallbackMessage
+    fallbackMessage: fallbackMessage,
+    countryPromptMessage: countryPromptMessage
 };

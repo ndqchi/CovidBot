@@ -2,7 +2,9 @@ const { FACEBOOK_ACCESS_TOKEN, WITAI_TOKEN } = require('../config');
 const { Wit } = require('node-wit');
 const axios = require('axios');
 const fetchData = require('./fetchData');
-const { welcomeMessage, byeMessage, encouragingMessage, fallbackMessage, CONFIDENCE_THRESHOLD} = require('./constants');
+const { welcomeMessage, byeMessage, 
+    encouragingMessage, fallbackMessage, 
+    countryPromptMessage, CONFIDENCE_THRESHOLD} = require('./constants');
 
 const sendTextMessage = (senderId, text) => {
     axios({
@@ -33,22 +35,28 @@ module.exports = (event) => {
                 sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
         }
         else if (res.intents[0].name == 'getCovidStatus' && res.entities['wit$location:location']) {
-            let location = res.entities['wit$location:location'][0].resolved.values[0].external.wikipedia;
-            if (location) {
-                console.log("location: "+ location);
-                let info = {location: location.toLowerCase().replace(" ","-")};
-                fetchData(info)
-                .then(() => {
-                    console.log("response: " + info.response);
-                    const response = info.response.length > 0 ? info.response : fallbackMessage[Math.floor((Math.random() * 3))];
-                    sendTextMessage(senderId, response);
-                })
-                .catch((e) => {
-                    console.log(e)
+            let domain = res.entities['wit$location:location'][0].resolved.values[0].domain;
+            if (domain !== 'country') {
+                sendTextMessage(senderId, countryPromptMessage);
+            }
+            else {
+                let location = res.entities['wit$location:location'][0].resolved.values[0].external.wikipedia;
+                if (location) {
+                    console.log("location: "+ location);
+                    let info = {location: location.toLowerCase().replace(" ","-")};
+                    fetchData(info)
+                    .then(() => {
+                        console.log("response: " + info.response);
+                        const response = info.response.length > 0 ? info.response : fallbackMessage[Math.floor((Math.random() * 3))];
+                        sendTextMessage(senderId, response);
+                    })
+                    .catch((e) => {
+                        console.log(e)
+                        sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
+                    });
+                } else
                     sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
-                });
-            } else
-                sendTextMessage(senderId, fallbackMessage[Math.floor((Math.random() * 3))]);
+            }
         }
         else if (res.intents[0].name == 'getCovidStatus'&& res.entities['global:global']) {
             let info = {location: "global"};
