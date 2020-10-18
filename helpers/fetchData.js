@@ -39,11 +39,13 @@ const fetchData = (info) => {
                 else {
                     data = raw[raw.length - 1];
                     data_prev = raw[raw.length - 2];
+                    let active_diff = data['Active'] - data_prev['Active'];
+                    let string_diff = active_diff >= 0 ? `+${active_diff}` : `${active_diff}`
                     info.response = `In ${data['Country']}, ` + 
                             `Confirmed: ${data['Confirmed']} (+${data['Confirmed'] - data_prev['Confirmed']}), ` +
                             `Deaths: ${data['Deaths']} (+${data['Deaths'] - data_prev['Deaths']}), ` +
                             `Recovered: ${data['Recovered']} (+${data['Recovered'] - data_prev['Recovered']}), ` +
-                            `Active: ${data['Active']} (+${data['Active'] - data_prev['Active']}), ` +
+                            `Active: ${data['Active']} (${string_diff}), ` +
                             `Updated Time: ${new Intl.DateTimeFormat('en-US', {year: 'numeric', month: 'long', day: 'numeric'})
                                 .format(new Date(data['Date']))} (UTC+0.00)`;
                     console.log("axios " + info.response);
